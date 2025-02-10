@@ -12,7 +12,48 @@ FermentationChamber is an Arduino-based control system designed for precise temp
 
 ## 📂 Project Structure  
 
-
+```plaintext
+FermentationChamber/
+├── src/                   
+│   ├── main.cpp             
+│   ├── display.ino          
+│   ├── lights_control.ino    
+│   ├── wifi.ino             
+│   ├── sensors/
+│   │   ├── sensors.cpp
+│   │   ├── sensors.h
+│   │   ├── sensors.ino
+│   ├── ui/
+│   │   ├── ui.cpp
+│   │   ├── touch.cpp
+│   ├── alarms/
+│   │   ├── alarms.cpp
+│   │   ├── alarms.h
+│   │   ├── alarms.ino
+│   ├── control/
+│   │   ├── control.cpp
+│   │   ├── control.h
+│   │   ├── control.ino
+│   ├── sdcard/
+│   │   ├── sdcard.cpp
+│   │   ├── sdcard.h
+│   ├── calibration/
+│   │   ├── calibration.cpp
+│   │   ├── calibration.h
+│   ├── config.h              
+├── lib/
+│   ├── Adafruit_GFX/
+│   ├── MCUFRIEND_kbv/
+│   ├── TouchScreen/
+│   ├── SD/
+│   ├── SPI/
+│   ├── DHT/
+│   ├── RTClib/
+│   ├── math/                    
+├── README.md                
+├── .gitignore
+      
+```
 
 ## 🔧 Hardware Requirements
 - **Microcontroller:** Arduino Mega 2560
