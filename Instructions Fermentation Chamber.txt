@@ -1,0 +1,281 @@
+Detailed User Manual – Fermentation Chamber Control System
+(Version 1.0 – February 2025)
+
+1. Introduction
+The Fermentation Chamber Control System is an Arduino Mega–based solution designed for monitoring and regulating fermentation parameters (temperature, humidity, pH, etc.) in a controlled environment. It features a TFT touchscreen interface, multiple sensors (DHT21, pH, water level), and actuators (LED grow lights, UV light, humidifier, etc.), plus data logging to an SD card for real‑time and historical monitoring.
+
+Il Sistema di Controllo della Camera di Fermentazione è una soluzione basata su Arduino Mega, progettata per monitorare e regolare i parametri della fermentazione (temperatura, umidità, pH, ecc.) in un ambiente controllato. Dispone di un’interfaccia touchscreen TFT, vari sensori (DHT21, sensore pH, sensore di livello) e attuatori (luci LED per la crescita, luce UV, umidificatore, ecc.), oltre alla registrazione dei dati su scheda SD per il monitoraggio in tempo reale e storico.
+
+2. System Overview
+2.1 Hardware Components
+Microcontroller: Arduino Mega 2560 (with WiFi optional)
+Display: TFT touchscreen (e.g., MCUFriend 3.6″)
+Sensors:
+DHT21: Ambient temperature and humidity
+pH Sensor: Measures liquid pH
+Water Level Sensor: Detects liquid level in the vessel
+RTC (DS3231): For accurate timekeeping
+Actuators/Indicators:
+LED grow lights, UV light, humidifier, and optionally heating/cooling devices (controlled via relays)
+Data Storage: SD card module via SPI
+Power Supply: Regulated 5V for the Arduino and peripherals; proper isolation for high-voltage circuits
+2.2 Software Components
+Arduino Sketch: Main program (e.g., main.ino) which handles sensor acquisition, control logic, menu navigation, and SD logging.
+Libraries Required:
+Adafruit_GFX, MCUFRIEND_kbv, TouchScreen, SD, SPI, DHT, RTClib, plus any custom libraries provided.
+3. Hardware Assembly and Setup
+3.1 Wiring and Installation
+Microcontroller and Display:
+
+Securely mount the Arduino Mega in the control enclosure.
+Install the TFT touchscreen on the front panel; connect data and control lines per the wiring diagram included in the archive.
+Sensor Connections:
+
+DHT21: Connect the data pin (e.g., to digital pin 7) with a 4.7 kΩ pull-up resistor.
+pH Sensor: Connect the analog output to an analog input (e.g., A0); verify the calibration circuit as specified.
+Water Level Sensor: Connect to an appropriate digital or analog input.
+RTC (DS3231): Connect via I²C (SDA/SCL on Arduino Mega).
+Actuators and Relays:
+
+Connect LED lights, UV light, and humidifier to designated digital outputs.
+Use SSRs or mechanical relays for high-voltage devices, ensuring proper isolation and adherence to safety standards.
+SD Card Module:
+
+Connect via SPI (typically pins 50–53). Format the card as FAT16/FAT32.
+Power Supply:
+
+Ensure a regulated 5V supply for the low-voltage components.
+High-voltage circuits must be wired according to safety guidelines.
+3.2 Mechanical Assembly
+Mount all components (Arduino, touchscreen, sensors, SD module, etc.) inside a sturdy, ventilated control box.
+Use cable ties and labels for organization and future troubleshooting.
+4. Software Setup and Code Upload
+4.1 Installing the Arduino IDE and Required Libraries
+Download and install the latest Arduino IDE.
+Extract the provided zip file containing the project code to a folder on your computer.
+Open the main sketch (e.g., main.ino) using Arduino IDE.
+In Sketch > Include Library > Manage Libraries, install the following libraries:
+Adafruit_GFX
+MCUFRIEND_kbv
+TouchScreen
+SD & SPI
+DHT
+RTClib
+If the zip includes custom libraries, follow the README instructions to add them to your IDE.
+4.2 Code Upload
+Board Selection: In Tools > Board, choose “Arduino Mega 2560”.
+Port Selection: In Tools > Port, select the correct COM port.
+Compile: Click “Verify” (✓) to compile the code.
+Upload: Click “Upload” (→) and wait for the code to upload successfully.
+Debug (Optional): Open the Serial Monitor to view startup messages and debug output.
+5. Calibration Procedures
+5.1 TFT Touchscreen Calibration
+First Use: If the touchscreen response is inaccurate, select “Calibrate Touch” from the main menu.
+Procedure: Follow on-screen prompts to tap the indicated points; calibration data will be stored for accurate touch input.
+5.2 Sensor Calibration
+DHT21
+Factory calibrated; compare readings with a reliable thermometer/hygrometer and adjust calibration constants in the code if necessary.
+pH Sensor
+Two-Point Calibration:
+Prepare two standard buffer solutions (e.g., pH 7.0 and pH 4.0).
+From the menu, select “Calibrate pH”.
+Immerse the sensor in the pH 7.0 solution until the reading stabilizes, then confirm.
+Repeat with the pH 4.0 solution.
+The system calculates calibration coefficients to correct future pH readings.
+Water Level Sensor
+Verify the sensor accurately reflects the liquid level.
+Adjust the threshold values in the code if the readings are off.
+6. Operating the System
+6.1 Main Menu Overview
+Upon powering the system, the touchscreen displays a main menu with these options:
+
+AUTO: Activates automatic process control.
+MANUAL: Enables direct manual control of actuators.
+CALIBRATE: Opens calibration submenus for the touchscreen, pH sensor, and water level sensor.
+LOG: Shows real-time data logs and historical graphs.
+SETTINGS: Allows adjustment of setpoints (temperature, humidity, pH) and other parameters.
+6.2 Automatic Mode
+Activation: Tap the “AUTO” button.
+Operation: The system continuously reads sensor data and automatically controls actuators (e.g., turns on the heater if temperature drops below the setpoint).
+Monitoring: Real-time sensor values, setpoints, and any active alarms are displayed; detailed graphs are accessible via the “LOG” menu.
+6.3 Manual Mode
+Activation: Tap the “MANUAL” button.
+Operation: In manual mode, you can individually control devices (e.g., toggling the heater, humidifier, or lights) through on-screen controls.
+Note: Manual commands remain active until you switch back to AUTO.
+6.4 Data Logging and Graphs
+Logging: Data is logged in CSV format on the SD card at a frequency defined in the code.
+Viewing Logs:
+From the “LOG” menu, view a real-time graph of process parameters.
+Browse historical logs and export data if needed.
+7. Troubleshooting and Maintenance
+7.1 Common Issues
+Sensor Readings Not Appearing:
+Verify all sensor cables and connections.
+Check for loose or damaged wires.
+Use the Serial Monitor for any error messages.
+Touchscreen Issues:
+Re-run the “Calibrate Touch” procedure.
+Clean the screen and check for any obstructions.
+Data Logging Problems:
+Confirm the SD card is inserted, formatted correctly (FAT16/FAT32), and has sufficient free space.
+Actuator Control Problems:
+Verify that relays/driver circuits are functioning.
+Check high-voltage connections and safety devices (GFI, circuit breakers).
+7.2 Routine Maintenance
+Calibration: Recalibrate the pH sensor and water level sensor periodically.
+Cleaning: Clean sensor surfaces and electrical contacts regularly to prevent dust or moisture buildup.
+Firmware Updates: Check the project repository for any firmware updates or bug fixes.
+Inspect Wiring: Regularly inspect wiring for wear or loose connections.
+7.3 Safety Precautions
+Always disconnect power before opening the control box.
+Handle electrical components with care and follow local electrical safety regulations.
+Use a properly rated enclosure to protect against environmental hazards.
+8. Support and Further Documentation
+GitHub Repository: For additional documentation, wiring diagrams, and code details, visit the project’s GitHub page.
+Issues and Community: Report issues or request support via the GitHub Issues section.
+Technical Documents: Refer to the detailed technical documents and schematics included in the zip file for specific hardware connections and configuration details.
+9. Contact and Feedback
+If you need further assistance or wish to suggest improvements, please open an Issue on the GitHub repository or contact the project maintainer directly.
+
+Manuale Dettagliato – Sistema di Controllo della Camera di Fermentazione
+(Versione 1.0 – Febbraio 2025)
+
+1. Introduzione
+Il Sistema di Controllo della Camera di Fermentazione è una soluzione basata su Arduino Mega, progettata per monitorare e regolare i parametri fondamentali della fermentazione (temperatura, umidità, pH, ecc.). Il sistema presenta:
+
+Interfaccia touchscreen TFT per il controllo interattivo
+Sensori ambientali (DHT21, sensore pH, sensore di livello)
+Attuatori (luci LED per la crescita, luce UV, umidificatore, ecc.)
+Registrazione dati su scheda SD per monitoraggio in tempo reale e storico
+2. Panoramica del Sistema
+2.1 Componenti Hardware
+Microcontrollore: Arduino Mega 2560 (con WiFi opzionale)
+Display: Touchscreen TFT (ad esempio, MCUFriend 3.6″)
+Sensori:
+DHT21: Misura temperatura e umidità ambientale
+Sensore pH: Misura l’acidità del liquido fermentante
+Sensore di Livello: Verifica il livello del liquido nella camera
+RTC (DS3231): Per il mantenimento dell’orario
+Attuatori/Indicatori:
+Luci LED per la crescita, luce UV, umidificatore, e opzionalmente elementi riscaldanti/raffreddanti (controllati tramite relè)
+Memoria Dati: Modulo SD (con SPI) per la registrazione dei dati in formato CSV
+Altri Moduli: Eventuale connettività WiFi e moduli di interfaccia
+2.2 Componenti Software
+Sketch Arduino: Il codice principale (es. main.ino) gestisce lettura dei sensori, logica di controllo, navigazione del menu e registrazione dati.
+Librerie Necessarie:
+Adafruit_GFX, MCUFRIEND_kbv, TouchScreen, SD, SPI, DHT, RTClib e librerie personalizzate se presenti.
+3. Assemblaggio Hardware e Configurazione
+3.1 Cablaggio e Installazione
+Montaggio e Display:
+Fissare l’Arduino Mega all’interno della scatola di controllo.
+Installare il touchscreen TFT sul pannello frontale e collegare secondo lo schema elettrico fornito.
+Collegamento dei Sensori:
+DHT21: Collegare il pin dati (ad esempio, al pin digitale 7) con una resistenza pull‑up da 4,7 kΩ.
+Sensore pH: Collegare l’uscita analogica (es. A0) seguendo il circuito di calibrazione indicato.
+Sensore di Livello: Collegare al pin adeguato (digitale o analogico).
+RTC (DS3231): Collegare tramite I²C (SDA e SCL).
+Collegamento degli Attuatori:
+Collegare luci LED, luce UV, umidificatore e, se presenti, elementi riscaldanti/raffreddanti a uscite digitali.
+Utilizzare relè (SSR o meccanici) per l’alta tensione seguendo le norme di sicurezza.
+Modulo SD:
+Collegare tramite SPI (tipicamente ai pin 50–53). La scheda deve essere formattata in FAT16/FAT32.
+Alimentazione:
+Utilizzare un alimentatore regolato a 5V per l’Arduino e i moduli.
+Assicurarsi che i circuiti ad alta tensione siano isolati e rispettino le normative.
+3.2 Assemblaggio Meccanico
+Montare saldamente Arduino, touchscreen, sensori, modulo SD e altri componenti all’interno dell’enclosure.
+Garantire adeguata ventilazione e protezione dai contaminanti.
+Etichettare i cavi per facilitare la manutenzione.
+4. Configurazione Software e Caricamento del Codice
+4.1 Installazione dell’IDE Arduino e delle Librerie
+Scaricare e installare l’IDE Arduino (versione più recente consigliata).
+Estrarre il file zip del progetto Fermentation-box‑ in una cartella.
+Aprire lo sketch principale (es. main.ino) con l’IDE Arduino.
+In Sketch > Include Library > Manage Libraries, cercare e installare:
+Adafruit_GFX, MCUFRIEND_kbv, TouchScreen, SD, SPI, DHT, RTClib
+Se nel progetto sono presenti librerie personalizzate, seguire le istruzioni specifiche.
+4.2 Caricamento del Codice
+Selezionare la Scheda: In Tools > Board, scegliere “Arduino Mega 2560”.
+Selezionare la Porta: In Tools > Port, selezionare il COM corretto.
+Verificare: Cliccare “Verify” (✓) per compilare il codice.
+Caricare: Cliccare “Upload” (→) e attendere il completamento senza errori.
+Monitor Serial (Opzionale): Aprire il Serial Monitor per eventuali messaggi di debug.
+5. Procedure di Calibrazione
+5.1 Calibrazione del Touchscreen
+Prima Accensione: Se il touchscreen non risponde correttamente, selezionare “Calibra Touch” dal menu principale.
+Procedura: Seguire le istruzioni sullo schermo toccando i punti indicati; i dati di calibrazione verranno salvati.
+5.2 Calibrazione dei Sensori
+Sensore DHT21
+È calibrato in fabbrica. Se si riscontrano errori, confrontare le letture con un termometro/igrometro affidabile e, se necessario, modificare le costanti nel codice.
+Sensore pH
+Calibrazione a Due Punti:
+Preparare due soluzioni tampone standard (es. pH 7,0 e pH 4,0).
+Selezionare “Calibra pH” nel menu.
+Immergere il sensore nella soluzione a pH 7,0 fino a stabilizzazione, quindi confermare.
+Ripetere con la soluzione a pH 4,0.
+Il sistema calcola i coefficienti di calibrazione e aggiorna le misurazioni.
+Sensore di Livello
+Verificare che il sensore legga correttamente il livello del liquido. Se necessario, regolare i valori soglia nel codice.
+6. Modalità di Operazione
+6.1 Interfaccia Principale
+Al riavvio, il touchscreen mostra un menu principale con le opzioni:
+
+AUTO: Controllo automatico dei parametri.
+MANUALE: Controllo diretto degli attuatori.
+CALIBRA: Accesso alle funzioni di calibrazione (touchscreen, pH, livello).
+LOG: Visualizzazione dei dati in tempo reale e dei grafici storici.
+SETTINGS: Impostazione dei setpoint e altri parametri di sistema.
+6.2 Modalità Automatica
+Attivazione: Toccare “AUTO” sul menu.
+Funzionamento: Il sistema legge continuamente i sensori e regola gli attuatori per mantenere i valori impostati.
+Monitoraggio: Le letture attuali e gli allarmi vengono mostrati in tempo reale; è possibile accedere a grafici dettagliati dal menu “LOG”.
+6.3 Modalità Manuale
+Attivazione: Selezionare “MANUALE”.
+Funzionamento: In modalità manuale, i controlli individuali permettono di accendere o spegnere i dispositivi (es. riscaldatore, umidificatore, luci).
+Nota: Le impostazioni manuali rimangono attive fino al riattivamento della modalità AUTO.
+6.4 Registrazione e Visualizzazione Dati
+Registrazione: I dati (temperatura, umidità, pH, allarmi) vengono salvati sulla scheda SD in formato CSV.
+Visualizzazione: Dal menu “LOG” è possibile vedere grafici in tempo reale e storici.
+Esportazione: I file possono essere esportati o cancellati tramite l’opzione “Accesso SD”.
+7. Risoluzione dei Problemi e Manutenzione
+7.1 Problemi Comuni
+Letture dei Sensori Assenti:
+Verificare collegamenti e cavi.
+Controllare eventuali messaggi di errore tramite il Serial Monitor.
+Touchscreen Inerente o Mal Calibrato:
+Ripetere la procedura “Calibra Touch”.
+Pulire lo schermo e verificare che non ci siano contaminanti.
+Problemi di Registrazione Dati:
+Assicurarsi che la scheda SD sia inserita, formattata correttamente e con spazio libero.
+Attuatori Non Funzionanti:
+Verificare il funzionamento dei relè o circuiti driver e la stabilità dell’alimentazione.
+7.2 Manutenzione Ordinaria
+Ricalibrazione Periodica: Effettuare periodicamente la calibrazione dei sensori pH e di livello.
+Pulizia: Pulire le superfici dei sensori e i connettori per evitare accumuli di polvere o umidità.
+Aggiornamenti Firmware: Consultare il repository per eventuali aggiornamenti o correzioni.
+Verifica Cablaggi: Ispezionare periodicamente i cavi e le connessioni.
+7.3 Precauzioni di Sicurezza
+Disconnettere sempre l’alimentazione prima di aprire la scatola di controllo.
+Manipolare con cautela i componenti elettrici e seguire le normative locali.
+Utilizzare un involucro protettivo per evitare contatti accidentali con circuiti ad alta tensione.
+8. Supporto e Documentazione Aggiuntiva
+Repository GitHub: Consulta la pagina GitHub del progetto per diagrammi, schemi elettrici e ulteriori dettagli.
+Forum e Comunità: Partecipa alle discussioni e segnalazioni tramite il sistema Issues del repository.
+Documenti Tecnici: La documentazione allegata nel file zip contiene schemi, diagrammi meccanici ed elettrici.
+9. Contatti e Feedback
+Per assistenza o ulteriori informazioni, apri un “Issue” sul repository GitHub o contatta direttamente il manutentore.
+
+Conclusion
+This manual provides comprehensive instructions for assembling, configuring, operating, calibrating, and maintaining your Fermentation Chamber Control System. Follow these detailed steps carefully and refer to the included diagrams and code comments for project‑specific details.
+
+Questo manuale fornisce istruzioni complete per assemblare, configurare, far funzionare, calibrare e mantenere il sistema di controllo della Camera di Fermentazione. Segui attentamente questi passaggi e consulta gli schemi inclusi e i commenti nel codice per dettagli specifici del progetto.
+
+Se necessiti ulteriori chiarimenti o modifiche, fammi sapere.
+
+
+
+
+
+
+Search
+
