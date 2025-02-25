@@ -186,10 +186,10 @@ void updatePilotsIfChanged() {
  * @brief Updates the display to reflect the status of active devices.
  */
 void updateDeviceStatusDisplay() {
-    // Clear the status area
+    // Limpiar el área de estado
     tft.fillRect(20, 200, 200, 40, TFT_BLACK);
 
-    // Draw active device indicators
+    // Dibujar indicadores de dispositivos activos
     int x = 20;
     if (mattOn) {
         drawButtonWithFeedback(x, 200, 40, 40, "M", TFT_GREEN, TFT_BLACK);
@@ -207,4 +207,14 @@ void updateDeviceStatusDisplay() {
         drawButtonWithFeedback(x, 200, 40, 40, "UV", TFT_GREEN, TFT_BLACK);
         x += 45;
     }
+    // Agregar indicadores para LED1 y LED2
+    if (ledPanel1On) {
+        drawButtonWithFeedback(x, 200, 40, 40, "L1", TFT_GREEN, TFT_BLACK);
+        x += 45;
+    }
+    if (ledPanel2On) {
+        drawButtonWithFeedback(x, 200, 40, 40, "L2", TFT_GREEN, TFT_BLACK);
+        x += 45;
+    }
 }
+
