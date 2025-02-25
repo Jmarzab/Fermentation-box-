@@ -8,60 +8,100 @@
  *        based on temperature and humidity thresholds.
  */
 void autoModeControl() {
-    if (!autoModeActive) return;  // If not in auto mode, exit function
+    if (!autoModeActive) return;  // Si no está en modo automático, salir
 
-    // Read current sensor values
+    // Lectura de los valores actuales de los sensores
     float currentTemp = getTemperature();
     float currentHumidity = getHumidity();
 
-    // --- Temperature Control ---
+    // --- Control de Temperatura (con histéresis) ---
+    // Encender calefacción si la temperatura es demasiado baja
     if (currentTemp < (targetTemperature - TEMP_MARGIN)) {
-        mattOn = true;  // Turn on heating pad
-        digitalWrite(HEATING_PAD_PIN, HIGH);
-    } else if (currentTemp >= targetTemperature) {
-        mattOn = false;  // Turn off heating pad
-        digitalWrite(HEATING_PAD_PIN, LOW);
-    }
-
-    // --- Humidity Control ---
-    if (currentHumidity < (targetHumidity - HUM_MARGIN)) {
-        humidifierOn = true;  // Turn on humidifier
-        digitalWrite(HUMIDIFIER_PIN, HIGH);
-    } else if (currentHumidity >= targetHumidity) {
-        humidifierOn = false;  // Turn off humidifier
-        digitalWrite(HUMIDIFIER_PIN, LOW);
-    }
-
-    // --- Fan Control (Full Auto Mode) ---
-    if (fanModeFullAuto) {
-        if (currentTemp > MAX_TEMP || currentHumidity > MAX_HUMIDITY) {
-            fanOnManual = true;
-            digitalWrite(FAN_PIN, HIGH);
-        } else {
-            fanOnManual = false;
-            digitalWrite(FAN_PIN, LOW);
+        if (!mattOn) {
+            mattOn = true;
+            digitalWrite(HEATING_PAD_PIN, HIGH);
         }
     }
+    // Apagar calefacción si la temperatura es demasiado alta
+    else if (currentTemp > (targetTemperature + TEMP_MARGIN)) {
+        if (mattOn) {
+            mattOn = false;
+            digitalWrite(HEATING_PAD_PIN, LOW);
+        }
+    }
+    // Si está entre los umbrales, se mantiene el estado actual
 
-    // --- Fan Control (Semi-Auto Mode) ---
+    // --- Control de Humedad (con histéresis) ---
+    // Encender humidificador si la humedad es demasiado baja
+    if (currentHumidity < (targetHumidity - HUM_MARGIN)) {
+        if (!humidifierOn) {
+            humidifierOn = true;
+            digitalWrite(HUMIDIFIER_PIN, HIGH);
+        }
+    }
+    // Apagar humidificador si la humedad es demasiado alta
+    else if (currentHumidity > (targetHumidity + HUM_MARGIN)) {
+        if (humidifierOn) {
+            humidifierOn = false;
+            digitalWrite(HUMIDIFIER_PIN, LOW);
+        }
+    }
+    // Si está entre los umbrales, se mantiene el estado actual
+
+    // --- Control del Ventilador ---
+    // Modo Full Auto: Enciende el ventilador si se supera un máximo de temperatura o humedad
+    if (fanModeFullAuto) {
+        // Reiniciamos cualquier flag de semi-auto al entrar en full auto
+        // (asumimos que el flag de semi-auto se gestiona solo en ese bloque)
+        if (currentTemp > MAX_TEMP || currentHumidity > MAX_HUMIDITY) {
+            if (!fanOnManual) {
+                fanOnManual = true;
+                digitalWrite(FAN_PIN, HIGH);
+            }
+        } else {
+            if (fanOnManual) {
+                fanOnManual = false;
+                digitalWrite(FAN_PIN, LOW);
+            }
+        }
+    }
+    // Modo Semi-Auto: El ventilador se alterna entre encendido y apagado según tiempos definidos
     else if (fanModeSemiAuto) {
         static unsigned long lastFanToggleTime = 0;
+        static bool semiAutoTimerInitialized = false;
         unsigned long currentTime = millis();
 
-        if (fanOnManual && (currentTime - lastFanToggleTime >= fanOnTime * 1000UL)) {
-            fanOnManual = false;
-            digitalWrite(FAN_PIN, LOW);
+        // Al ingresar por primera vez en modo semi-auto, inicializar el temporizador
+        if (!semiAutoTimerInitialized) {
             lastFanToggleTime = currentTime;
-        } else if (!fanOnManual && (currentTime - lastFanToggleTime >= fanOffTime * 1000UL)) {
-            fanOnManual = true;
-            digitalWrite(FAN_PIN, HIGH);
-            lastFanToggleTime = currentTime;
+            semiAutoTimerInitialized = true;
+        }
+        
+        // Si el ventilador está encendido, se espera fanOnTime; si está apagado, se espera fanOffTime
+        if (fanOnManual) {
+            if (currentTime - lastFanToggleTime >= fanOnTime * 1000UL) {
+                fanOnManual = false;
+                digitalWrite(FAN_PIN, LOW);
+                lastFanToggleTime = currentTime;
+            }
+        } else {
+            if (currentTime - lastFanToggleTime >= fanOffTime * 1000UL) {
+                fanOnManual = true;
+                digitalWrite(FAN_PIN, HIGH);
+                lastFanToggleTime = currentTime;
+            }
         }
     }
+    // En otros casos, se puede reiniciar el flag de semi-auto para asegurar inicialización al reactivar el modo
+    else {
+        // Si no se está en modo semi-auto, reiniciamos la inicialización del temporizador
+        // (Si se requiere, se puede declarar una variable global o similar)
+    }
 
-    // Update status indicators if anything changed
+    // Actualizar indicadores en la interfaz si ha habido cambios
     updatePilotsIfChanged();
 }
+
 
 /**
  * @brief Handles manual control logic.
