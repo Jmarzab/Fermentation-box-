@@ -9,7 +9,7 @@ Este proyecto es una caja de fermentación controlada con Arduino Mega y conecti
 - `firmware/esp8266/` – Firmware para el módulo Wi-Fi ESP8266 (servidor API REST). Actualmente es un esqueleto para integrar.
 - `docs/` – Documentación del proyecto, guía de construcción, referencias a la interfaz y changelog.
 - `hardware/` – Esquemas eléctricos, lista de materiales (BOM) y notas de montaje.
-- `3d/` – Modelos y piezas imprimibles en 3D.
+
 
 ## Licencia
 
